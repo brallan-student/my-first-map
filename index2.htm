@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>My First Map Markers</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    img {
+       max-width: 200px; 
+    
+       
+        height: auto;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYnJhbGxhbi1zdHVkZW50IiwiYSI6ImNtZzVtbnlxZzA2NWIycHE0d2RhOTA2dDgifQ.I099MEDb48u-n_WFiQ0o3A';
+    const map = new mapboxgl.Map({
+      container: 'map',
+      // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+      style: 'mapbox://styles/mapbox/outdoors-v12',
+      center: [-122.2712, 37.8044],
+      zoom: 5
+    });
+
+    map.on('load', () => {
+      map.addSource('my-places', {
+        'type': 'geojson',
+        'data': {
+          'type': 'FeatureCollection',
+          'features': [
+            {
+              'type': 'Feature',
+              'geometry': {
+                'type': 'Point',
+                'coordinates': [-120.6596, 35.2828],
+              },
+              "properties": {
+                'name': "Favorite internship",
+                'description': "Cal Poly SLO",
+              } 
+            },
+            {
+              'type': 'Feature',
+              'geometry': {
+                'type': 'Point',
+                'coordinates': [-122.1454, 37.7487],
+              },
+              "properties": {
+                'name': "My 3rd favorite internship",
+                'description': "Oakland zoo internship" 
+              }
+            },
+            {
+              'type': 'Feature',
+              'geometry': {
+                'type': 'Point',
+                'coordinates': [-122.2711, 37.8033],
+              },
+              "properties": {
+                'name': "my 2nd favorite internship",
+                'description': "Interned at EBMUD here",
+              }
+            }
+          ]
+        }
+      });
+
+      map.addLayer({
+        'id': 'my-places',
+        'type': 'circle',
+        'source': 'my-places',
+        'paint': {
+          'circle-radius': 6,
+          'circle-color': '#B42222'
+        },
+        'filter': ['==', '$type', 'Point']
+      });
+    });
+
+          // add popup on click
+      map.addInteraction('popup', {
+        type: 'click',
+        target: { layerId: 'my-places' },
+        handler: (e) => {
+          const coordinates = e.feature.geometry.coordinates.slice();
+          const name = e.feature.properties.name;
+          const description = e.feature.properties.description;
+          // const image = e.feature.properties.image;
+
+          new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML("<strong>" + name + "</strong><br/>" + description)
+            // .setHTML("<img src='" + image + "'><br><strong>" + name + "</strong><br/>" + description)
+            .addTo(map);
+        }
+      });
+
+
+    // map.addInteraction('popup', {
+    //   type: 'click',
+    //   target: { layerId: 'my-places' },
+    //   handler: (e) => {
+    //     // Copy coordinates array.
+    //     const coordinates = e.feature.geometry.coordinates.slice();
+    //     const name = e.feature.properties.name;
+    //     const description = e.feature.properties.description;
+    //     const image = e.feature.properties.image;
+
+    //     new mapboxgl.Popup()
+    //       .setLngLat(coordinates)
+    //       // .setHTML("<img src='" + image + "'><br><strong>" + name + "</strong><br/>" + description)
+    //       .addTo(map);
+    //   }
+    // });
+
+  </script>
+
+</body>
+
+</html>
